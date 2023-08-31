@@ -7,6 +7,7 @@ public class Main {
         //creo un par de libros
         biblioteca1.agregarlibro("20000leguas","julio","509","32","5", 4);
         biblioteca1.agregarlibro("20050leguas","julio","509","32","5", 4);
+        biblioteca1.agregarlibro("julio","gabriel","509","32","5", 4);
         //veo la lista con elementos llamados julio
         // para saber que numero ingresar en seleccionar libro
         System.out.println(biblioteca1.verLibros("julio"));
