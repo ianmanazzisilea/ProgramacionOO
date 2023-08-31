@@ -15,19 +15,34 @@ public class Biblioteca {
         libros.add(libro1);
         return libro1.verdescripcion();
     }
-    public void buscar(String autor){
+    public void buscarautor(String autor){
         Iterator<Libro> iteradorLibros = libros.iterator();
         for (int i = 0; i < libros.size(); i++) {
             Libro libro1 = libros.get(i);
             if (libro1.getAutor()==autor){
                 libros2.add(libro1);
-                //System.out.println(libro1.verdescripcion());
             }
         }
-        //return libro2; //devuelve un libro de libros
-
+    }
+    public void buscartitulo(String titulo){
+        Iterator<Libro> iteradorLibros = libros.iterator();
+        for (int i = 0; i < libros.size(); i++) {
+            Libro libro1 = libros.get(i);
+            if (libro1.getTitulo()==titulo){
+                libros2.add(libro1);
+            }
+        }
     }
 
+    public void buscarisbn(String isbn){
+        Iterator<Libro> iteradorLibros = libros.iterator();
+        for (int i = 0; i < libros.size(); i++) {
+            Libro libro1 = libros.get(i);
+            if (libro1.getIsbn()==isbn){
+                libros2.add(libro1);
+            }
+        }
+    }
     public boolean prestar(Libro libro){
         if (libro.prestar()){
             return true;
@@ -55,10 +70,12 @@ public class Biblioteca {
     //    return libros.get(numerolibro);
 
     //Mascara
-    public String verLibros(String autor){
+    public String verLibros(String identificador){
         libros2.clear();
         Iterator<Libro> iteradorLibros = libros2.iterator();
-        buscar(autor);
+        buscarautor(identificador);
+        buscartitulo(identificador);
+        buscarisbn(identificador);
         String descripciongeneral="";
         for (int i = 0; i < libros2.size(); i++) {
             Libro libro2 = libros2.get(i);
@@ -67,9 +84,11 @@ public class Biblioteca {
         }
         return descripciongeneral;
     }
-    public Libro seleccionarlibro(String autor,int seleccionador){
+    public Libro seleccionarlibro(String identificador,int seleccionador){
         Iterator<Libro> iteradorLibros = libros2.iterator();
-        buscar(autor);
+        buscarautor(identificador);
+        buscartitulo(identificador);
+        buscarisbn(identificador);
         seleccionador--;
         for (int i = 0; i < libros2.size(); i++) {
             Libro libro2 = libros2.get(i);
