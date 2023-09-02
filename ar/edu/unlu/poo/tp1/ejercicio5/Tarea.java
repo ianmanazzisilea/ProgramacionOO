@@ -37,3 +37,24 @@ public class Tarea {
         return siguiente;
     }
 }
+
+
+    public boolean getEstado(){
+        return estado;
+    }
+
+    public LocalDate getFechalimite() {
+        return fechalimite;
+    }
+
+    public void setFechalimite(LocalDate fechalimite) {
+        this.fechalimite = fechalimite;
+    }
+
+    public void setSiguiente(Tarea siguiente) {
+        this.siguiente = siguiente;
+    }
+    public Tarea getSiguiente() {
+        return siguiente;
+    }
+}
