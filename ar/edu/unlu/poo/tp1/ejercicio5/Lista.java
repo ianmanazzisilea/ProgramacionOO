@@ -3,26 +3,22 @@ package ar.edu.unlu.poo.tp1.ejercicio5;
 import java.time.LocalDate;
 
 public class Lista {
-    //static private final ArrayList<Tarea> tareas = new ArrayList<>();
     private Tarea tareacero;
     private boolean insertar(Tarea tarea, int posicion){
-        int i=0;
+        int i=2;
         Tarea tarearecorrer = new Tarea();
         if (tareacero != null){
             if (tareacero.getSiguiente() != null){
                 tarearecorrer = tareacero;
-                while (tarearecorrer.getSiguiente() != null){
-                    if (i< (posicion - 1)){
+                while ((tarearecorrer.getSiguiente() != null) && (i != (posicion ))){
                         tarearecorrer = tarearecorrer.getSiguiente();
                         i++;
-                    }
-                    else
-                    if (i == (posicion - 1)){
-                        tarea.setSiguiente(tarearecorrer.getSiguiente());
-                        tarearecorrer.setSiguiente(tarea);
-                        return true;
-                    }
                 }
+                if (i == (posicion )){
+                    tarea.setSiguiente(tarearecorrer.getSiguiente());
+                    tarearecorrer.setSiguiente(tarea);
+                    return true;
+                }else return false;
             }
             else
             if (posicion == 2){
@@ -37,6 +33,7 @@ public class Lista {
         else
         if (posicion == 1){
             tareacero = tarea;
+            return true;
         }
         return false;
     }
@@ -83,40 +80,43 @@ public class Lista {
         int i=1;
         if (tareacero != null){
             if (tareacero.getSiguiente() != null){
-                Tarea tarea1 = tareacero;
-                while (tarea1.getSiguiente() != null){
-                    if (i< (prioridad)){
+                if (prioridad != 1){
+                    Tarea tarea1 = tareacero;
+                    while ((tarea1.getSiguiente() != null) && (i != prioridad-1)){
                         tarea1 = tarea1.getSiguiente();
                         i++;
                     }
-                    else
-                    if (i == (prioridad)){
-                        tarea1 = tarea1.getSiguiente();
-                        //Tarea tareasiguiente = new Tarea();
-                        //tareasiguiente = tarea1.getSiguiente();
-                        //tarea1.setSiguiente(tareasiguiente.getSiguiente());
-                        //tarea1.setDato(nodosiguiente.getDato());
-                        //nodosiguiente = null;
+                    if ((i == prioridad-1)&&(tarea1.getSiguiente() != null)){
+                        tarea1.setSiguiente(tarea1.getSiguiente().getSiguiente());
+                        tarea1.getSiguiente().setSiguiente(null);
                         return true;
                     }
+                    if ((i == prioridad-1)&&(tarea1.getSiguiente() == null)){
+                        tarea1.setSiguiente(null);
+                        return true;
+                    }
+                    return false;
                 }
-                if (i == (prioridad)){
-                    tarea1 = null;
+                else {
+                    tareacero = tareacero.getSiguiente();
+                    return true;
+                }
+
+            }
+            else
+                if (prioridad == 1){
+                    tareacero = null;
                     return true;
                 }
                 else return false;
-            }
-            if (prioridad == 1){
-                tareacero = null;
-                return true;
-            }
-            else return false;
         }
         else return false;
     }
-    public void crear (Object descripcion, int prioridad, String estado, LocalDate fechalimite){
+    //-------------------------------------------------------------------------------------------------------------------
+    public void agregartarea (Object descripcion, int prioridad, String estado, int dialimite, int meslimite, int añolimite){
         if (estado == "completa"){
             Tarea tarea1 = new Tarea();
+            LocalDate fechalimite = LocalDate.of(añolimite, meslimite, dialimite);
             tarea1.setFechalimite(fechalimite);
             tarea1.setDescripcion(descripcion);
             tarea1.setEstado(true);
@@ -125,6 +125,7 @@ public class Lista {
         else
         if (estado == "incompleta"){
             Tarea tarea1 = new Tarea();
+            LocalDate fechalimite = LocalDate.of(añolimite, meslimite, dialimite);
             tarea1.setFechalimite(fechalimite);
             tarea1.setDescripcion(descripcion);
             tarea1.setEstado(false);
@@ -144,6 +145,7 @@ public class Lista {
     public void modificarprioridad(int prioridadant, int prioridadmodi){
         Tarea tareaaux =recuperar(prioridadant);
         eliminar(prioridadant);
+        tareaaux.setSiguiente(null);
         insertar(tareaaux, prioridadmodi);
     }
     public void mostrar(){
@@ -156,7 +158,7 @@ public class Lista {
                     sestado = "completa";
                 }
                 else
-                    if (tarea.getFechalimite().isAfter(fechaactual)){
+                    if (tarea.getFechalimite().isBefore(fechaactual)){
                         sestado = "vencida";
                     }
                     else sestado = "incompleta";
@@ -164,6 +166,29 @@ public class Lista {
                         " " + sestado);
                 tarea = tarea.getSiguiente();
             }
+        }
+    }
+    public void modificarestado(int prioridad){
+        int i;
+        Tarea tarea1 = tareacero;
+        for (i = 1; i<= longitud()  ;i++){
+            if (i == prioridad){
+                if (tarea1.getEstado()){
+                    tarea1.setEstado(false);
+                }else tarea1.setEstado(true);
+            }
+            tarea1 = tarea1.getSiguiente();
+        }
+    }
+    public void modificarfecha(int prioridad, int dialimite, int meslimite, int añolimite){
+        int i;
+        Tarea tarea1 = tareacero;
+        for (i = 1; i<= longitud()  ;i++){
+            if (i == prioridad){
+                LocalDate fechalimite = LocalDate.of(añolimite, meslimite, dialimite);
+                tarea1.setFechalimite(fechalimite);
+            }
+            tarea1 = tarea1.getSiguiente();
         }
     }
 }
