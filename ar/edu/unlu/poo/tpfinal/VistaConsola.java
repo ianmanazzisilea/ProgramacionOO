@@ -22,8 +22,11 @@ public class VistaConsola implements IVista{
     private ArrayList<String> cartasMesa = new ArrayList<>();
 
     public void VistaConsola(){
+        this.frame = new JFrame("VistaConsola");
+        frame.setContentPane(contentPane);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
+        frame.pack();
     }
     @Override
     public void setFaseactual() {
