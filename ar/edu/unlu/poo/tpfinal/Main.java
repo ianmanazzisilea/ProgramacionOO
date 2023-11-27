@@ -12,10 +12,7 @@ public class Main {
                 Controlador controlador = new Controlador(vista1,modelo);
                 modelo.setControlador(controlador);
                 vista1.setControlador(controlador);
-                modelo.empezar();
             }
         });
     }
-    //
-    //Controlador controlador = new Controlador() necesita ivista
 }

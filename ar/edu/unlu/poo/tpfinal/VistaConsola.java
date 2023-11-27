@@ -1,9 +1,10 @@
 package ar.edu.unlu.poo.tpfinal;
 
 import javax.swing.*;
-import java.util.ArrayList;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Objects;
 
 
 public class VistaConsola implements IVista{
@@ -16,18 +17,15 @@ public class VistaConsola implements IVista{
     private JPanel Reglas;
     private JTextArea txtSalida;
     private JFrame frame;
-    private fase faseactual = fase.opponent;
+    private fase faseactual = fase.salaespera;
     private ArrayList<String> mano = new ArrayList<>();
     private Controlador controlador;
     private ArrayList<String> cartasMesa = new ArrayList<>();
+    private int indice;
+    private ArrayList<String> jugada = new ArrayList<>();
+    private int indicebonus;
+    private boolean canto = true;
 
-    public void VistaConsola(){
-        this.frame = new JFrame("VistaConsola");
-        frame.setContentPane(contentPane);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
-        frame.pack();
-    }
     @Override
     public void setFaseactual() {
         faseactual = fase.draw;
@@ -42,11 +40,16 @@ public class VistaConsola implements IVista{
     public void mesaactualizada(ArrayList<String> cartasMesa,ArrayList<String> cartasMano) {
         this.mano = cartasMano;
         this.cartasMesa = cartasMesa;
+        mesaactualizada();
+    }
+    public void mesaactualizada(){
+        txtSalida.append("mano:" + "\n");
         for (int i = 0; i < mano.size(); i++) {
-            txtSalida.append(mano.get(i));
+            txtSalida.append("carta " + (i + 1) + mano.get(i) + "\n");
         }
+        txtSalida.append("mesa:" + "\n");
         for (int i = 0; i < cartasMesa.size(); i++) {
-            txtSalida.append(cartasMesa.get(i));
+            txtSalida.append("carta " + (i + 1) + cartasMesa.get(i) + "\n");
         }
     }
 
@@ -54,7 +57,7 @@ public class VistaConsola implements IVista{
     private enum fase{
         draw,
         mainfase,
-        shout,
+        bonus,
         opponent,
         salaespera
     }
@@ -65,14 +68,26 @@ public class VistaConsola implements IVista{
 
     //-------------------------comportamiento---------------------------------------------------
     public VistaConsola() {
+        this.frame = new JFrame("VistaConsola");
+        //frame.setContentPane(contentPane);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //frame.pack();
         tabbedPane1.setTitleAt(0,"juego");
         tabbedPane1.setTitleAt(0,"reglas");
         frame = new JFrame("<class name>");
         frame.setContentPane(contentPane);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
-        txtSalida.append("aprete si cuando desee empezar");
-
+        txtSalida.append("aprete si cuando desee empezar" + "\n");
+        frame.setVisible(true);
+        txtEntrada.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                txtSalida.append(txtEntrada.getText() + "\n");
+                procesarEntrada(txtEntrada.getText());
+                txtEntrada.setText("");
+            }
+        });
         button1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -87,104 +102,158 @@ public class VistaConsola implements IVista{
         input = input.trim();
         if (input.isEmpty())
             return;
-        switch (faseactual){
-            case draw : draw(input);
-            break;
-            case mainfase : mainfase(input);
-            break;
-            case shout : shout(input);
-            break;
-            case salaespera : salaespera(input);
-            break;
+        if (mano.size() == 2){
+            canto = false;
+            if (input.toLowerCase() == "dos"){
+                canto = true;
+            }
+            else
+                switch (faseactual){
+                    case draw : draw(input);
+                        break;
+                    case mainfase : mainfase(input);
+                        break;
+                    case bonus : bonus(input);
+                        break;
+                    case salaespera : salaespera(input);
+                        break;
+                }
         }
+        else {
+            switch (faseactual){
+                case draw : draw(input);
+                    break;
+                case mainfase : mainfase(input);
+                    break;
+                case bonus : bonus(input);
+                    break;
+                case salaespera : salaespera(input);
+                    break;
+            }
+        }
+
         mostrarMenu();
 
     }
     private void salaespera(String input){
-        if (input == "si"){
+        if (Objects.equals(input, "si")){
+            faseactual = fase.opponent;
             controlador.empezar();
         }
     }
     private void draw(String input){
-        if (input == "si"){
-            controlador.robar(nombre);
+        if (Objects.equals(input, "si")){
+            controlador.robar();
             faseactual = fase.mainfase;
         }
-        if (input == "no"){
+        if (Objects.equals(input, "no")){
             faseactual = fase.mainfase;
         }
     }
 
     private void mainfase(String input){
-        int indice = cartasMesa.size();
         if (Integer.valueOf(input) > 0){
-            if (Integer.valueOf(input) >= mano.size()){
-                txtSalida.append("ingrese la posicion de una carta que tenga o 0 para pasar de turno");
+            if (Integer.valueOf(input) > mano.size()){
+                txtSalida.append("ingrese la posicion de una carta que tenga o 0 para pasar de carta en mesa" + "\n");
             }
             else {
-                controlador.jugada(nombre,input,indice);
-                indice--;
-                txtSalida.append("que carta de la mano desea emparejar con la carta " + indice);
+                jugada.add(String.valueOf(Integer.valueOf(input) - 1));
             }
-            //"ingrese la carta con la que quiere emparejar la " + indice + "carta"
         }
         if (Integer.valueOf(input) == 0){
-            if (indice == 0){
-                faseactual = fase.shout;
-            }
-            indice = indice - 1;
-            txtSalida.append("que carta de la mano desea emparejar con la carta " + indice);
-        }
-        if (Integer.valueOf(input) < 0){
-            txtSalida.append("ingrese la posicion de una carta que tenga o 0 para pasar de turno");
-        }
-    }
-    private void shout(String input){
-        if (mano.size() == 2){
-            if (input == "si"){
-                faseactual = fase.opponent;
-                controlador.pasoturno();
+            if (indice == 1){
+                if (jugada.size() > 0){
+                    controlador.jugada(jugada,indice-1);
+                    txtSalida.append("intentó emparejar: "+"\n");
+                    for (int i = 0; i < jugada.size(); i++) {
+                        txtSalida.append("carta " + (Integer.valueOf(jugada.get(i)) + 1) + "\n");
+                    }
+                    txtSalida.append(" con la carta " + indice + " de la mesa" + "\n");
+
+                }
+                faseactual = fase.bonus;
+                indice--;
             }
             else {
-                controlador.nocanto(nombre);
+                if (jugada.size() > 0){
+                    controlador.jugada(jugada,indice-1);
+                    txtSalida.append("intentó emparejar: " + "\n");
+                    for (int i = 0; i < jugada.size(); i++) {
+                        txtSalida.append("carta " + (Integer.valueOf(jugada.get(i))+1) + "\n");
+                    }
+                    txtSalida.append(" con la carta " + indice + " de la mesa" + "\n");
+                }
+                indice--;
+                txtSalida.append("que carta de la mano desea emparejar con la carta " + indice + "\n");
+            }
+            jugada = new ArrayList<>();
+        }
+        if (Integer.valueOf(input) < 0){
+            txtSalida.append("ingrese la posicion de una carta que tenga o 0 para pasar de turno" + "\n");
+        }
+    }
+    private void bonus(String input){
+        if (indicebonus == 0){
+            indicebonus = controlador.bonus();
+            if(indicebonus == 0){
                 faseactual = fase.opponent;
                 controlador.pasoturno();
             }
+        }
+        if (indicebonus > 1){
+            if (Integer.valueOf(input)>=1){
+                if (Integer.valueOf(input)<= mano.size()){
+                    indicebonus--;
+                    controlador.descartarbonus(Integer.valueOf(input)-1);
+                }
+            }
+
+        }
+        if (indicebonus == 1){
+            if (Integer.valueOf(input)>=1){
+                if (Integer.valueOf(input)<= mano.size()){
+                    indicebonus--;
+                    controlador.descartarbonus(Integer.valueOf(input)-1);
+                    //pasa turno
+                    faseactual = fase.opponent;
+                    controlador.pasoturno();
+                }
+            }
+
+        }
+        if (!canto){
+            controlador.nocanto();
         }
 
     }
     //-------------------visual-----------------------------------------------
     private void mostraropponent(){
-        for (int i = 0; i < mano.size(); i++) {
-            txtSalida.append(mano.get(i));
-        }
+            mesaactualizada();
     }
     private void mostrardraw(){
-        for (int i = 0; i < mano.size(); i++) {
-            txtSalida.append(mano.get(i));
-        }
         txtSalida.append("desea agarrar una carta?");
     }
     private void mostrarmain(){
-        for (int i = 0; i < mano.size(); i++) {
-            txtSalida.append(mano.get(i));
+        if (indice == 0){
+            indice = cartasMesa.size();
         }
-        txtSalida.append("que carta de la mano desea emparejar con la carta " + cartasMesa.size());
+        txtSalida.append("que carta de la mano desea emparejar con la carta " + indice);
     }
-    private void mostrarshout(){
-        txtSalida.removeAll();
-        for (int i = 0; i < mano.size(); i++) {
-            txtSalida.append(mano.get(i));
+    private void mostrarbonus(){
+        mesaactualizada();
+        if (controlador.booleanbonus()){
+            txtSalida.append("ingrese carta que desee descartar por bonus de color");
         }
+        else txtSalida.append("ingrese algo en el input");
+
     }
     public void mostrarMenu(){
-        //txtSalida.removeAll();
         switch(faseactual){
             case draw: mostrardraw();
             break;
             case mainfase : mostrarmain();
             break;
-            case shout : mostrarshout();
+            case bonus : mostrarbonus();
             break;
             case opponent : mostraropponent();
             break;

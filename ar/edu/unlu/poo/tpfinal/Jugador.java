@@ -15,7 +15,7 @@ public class Jugador {
     public ArrayList<Carta> getMano() {
         return mano;
     }
-    public void desacartar(int indice){
+    public void desacartar(Carta indice){
         mano.remove(indice);
     }
 }

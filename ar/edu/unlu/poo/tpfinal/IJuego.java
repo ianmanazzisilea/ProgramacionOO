@@ -1,10 +1,12 @@
 package ar.edu.unlu.poo.tpfinal;
 
+import java.util.ArrayList;
+
 public interface IJuego {
 
-    void robar(int i);
+    void robar();
 
-    void jugada(int i, int intindicemano, int indicemesa);
+    void jugada(ArrayList<Integer> intindicemano, int indicemesa);
 
     void turno();
     void empezar();

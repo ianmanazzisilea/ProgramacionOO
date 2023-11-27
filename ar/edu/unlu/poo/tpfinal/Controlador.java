@@ -14,28 +14,20 @@ public class Controlador implements Observer{
         this.vista = vista;
         this.modelo = modelo;
     }
-    public void robar(String jugador){
-        for (int i = 0; i < jugadores.size(); i++) {
-            if (jugadores.get(i) == jugador){
-                modelo.robar(i);
-            }
-        }
+    public void robar(){
+        modelo.robar();
     }
-    public void jugada(String jugador,String indicemano,int indicemesa){
-        int intindicemano = Integer.valueOf(indicemano);
-        for (int i = 0; i < jugadores.size(); i++) {
-            if (jugadores.get(i) == jugador){
-                modelo.jugada(i,intindicemano,indicemesa);
-            }
+    public void jugada(ArrayList<String> indicemano,int indicemesa){
+        ArrayList<Integer> manojugada = new ArrayList<>();
+        for (int i = 0; i < indicemano.size(); i++) {
+            int intindicemano = Integer.valueOf(indicemano.get(i));
+            manojugada.add(intindicemano);
         }
+        modelo.jugada(manojugada,indicemesa);
     }
-    public void nocanto(String jugador){
-        for (int i = 0; i < jugadores.size(); i++) {
-            if (jugadores.get(i) == jugador){
-                modelo.robar(i);
-                modelo.robar(i);
-            }
-        }
+    public void nocanto(){
+        modelo.robar();
+        modelo.robar();
     }
     public void pasoturno(){
         modelo.turno();
@@ -48,6 +40,16 @@ public class Controlador implements Observer{
     public void mostrar(ArrayList<String> listamesa,ArrayList<String> listamano){
         vista.mesaactualizada(listamesa, listamano);
     }
+    public boolean booleanbonus(){
+        return modelo.getBBonus();
+    }
+    public int bonus(){
+        return modelo.getBonus();
+    }
+    public void descartarbonus(int indicemano){
+        modelo.descartarbonus(indicemano);
+    }
+
     @Override
     public void update() {
 
