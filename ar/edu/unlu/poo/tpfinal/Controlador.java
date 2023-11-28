@@ -2,17 +2,24 @@ package ar.edu.unlu.poo.tpfinal;
 
 import java.util.ArrayList;
 
-public class Controlador implements Observer{
+public class Controlador{
     private IVista vista;
     private Juego modelo;
     private ArrayList<String> jugadores = new ArrayList<>();
-
-    public void setfase(){
-        vista.setFaseactual();
-    }
-    public Controlador(IVista vista, Juego modelo) {
-        this.vista = vista;
+    private Jugador jugador;
+    public Controlador(Juego modelo, Jugador jugador) {
+        //this.vista = vista;
         this.modelo = modelo;
+        this.modelo.ingresarJugador(jugador);
+        this.jugador = jugador;
+    }
+
+    public void setVista(IVista vista) {
+        this.vista = vista;
+    }
+
+    public void hayganador(){
+        modelo.hayganador(jugador);
     }
     public void robar(){
         modelo.robar();
@@ -33,12 +40,32 @@ public class Controlador implements Observer{
         modelo.turno();
     }
 
+    public Juego getModelo() {
+        return modelo;
+    }
+    public void setobserver(Observer observer){
+        modelo.attach(observer);
+    }
     public void empezar(){
         modelo.empezar();
     }
     //temporal
-    public void mostrar(ArrayList<String> listamesa,ArrayList<String> listamano){
-        vista.mesaactualizada(listamesa, listamano);
+
+    public boolean getTurno(){
+        return modelo.getTurno(jugador);
+    }
+    public ArrayList<String> getMano() {
+        ArrayList<String> mano=new ArrayList<>();
+        for (int j = 0; j < jugador.getMano().size(); j++) {
+            mano.add(jugador.getMano().get(j).getColor() + " " + jugador.getMano().get(j).getNumero());
+        }
+        return mano;
+    }
+    public ArrayList<String> getMesa(){
+        return modelo.getCartas();
+    }
+    public String ganador(){
+        return modelo.getGanador();
     }
     public boolean booleanbonus(){
         return modelo.getBBonus();
@@ -48,10 +75,5 @@ public class Controlador implements Observer{
     }
     public void descartarbonus(int indicemano){
         modelo.descartarbonus(indicemano);
-    }
-
-    @Override
-    public void update() {
-
     }
 }

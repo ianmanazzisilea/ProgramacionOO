@@ -3,17 +3,28 @@ package ar.edu.unlu.poo.tpfinal;
 import java.util.ArrayList;
 
 public class Juego implements Subject{
-    private ArrayList<Observer> observers;
+    private ArrayList<Observer> observers = new ArrayList<>() ;
     static private ArrayList<Jugador> jugadores = new ArrayList();
     private Mazo mazo = new Mazo();
     static private ArrayList<Carta> cartas = new ArrayList();//cartas en mesa
     private int turno=0;
     private int bonus = 0;
-    private ArrayList<Observer> observers = new ArrayList<>();
-    private String subjectState;
-    private Controlador controlador;//temporal
     private ArrayList<Carta> cartasbonus = new ArrayList<>();
+    private Jugador jugadorganador;
+    //----------------------------------GETTERS-------------------------------
+    public boolean getTurno(Jugador jugador){
+        if (jugador==jugadores.get(turno)){
+            return true;
+        }
+        return false;
+    }
+    public String getGanador() {
+        return jugadorganador.getNombre();
+    }
 
+    public void ingresarJugador(Jugador jugador){
+        jugadores.add(jugador);
+    }
     public int getBonus() {
         return bonus;
     }
@@ -23,21 +34,18 @@ public class Juego implements Subject{
         }
         else return false;
     }
+    public void hayganador(Jugador jugador){
+        jugadorganador = jugador;
+        notifyMessage(Evento.FIN_PARTIDA);
+    }
     public void descartarbonus(int indicemano){
         Carta carta = jugadores.get(0).getMano().get(indicemano);
         cartasbonus.add(carta);
         jugadores.get(0).desacartar(carta);
     }
-    public void setControlador(Controlador controlador) {
-        this.controlador = controlador;
-    }
 
     //inicio del juego------------------------------------
     public void empezar(){
-        /*for (int i = 0; i < observers.size(); i++) {
-            jugadores.add(new Jugador());
-        }*/
-        jugadores.add(new Jugador());
         //repartir cartas
         for (int i = 0; i < 7; i++) {
             for (int j = 0; j < jugadores.size(); j++) {
@@ -46,12 +54,11 @@ public class Juego implements Subject{
         }
         cartas.add(mazo.getCartaSuperior());
         cartas.add(mazo.getCartaSuperior());
-        controlador.setfase();
+        notifyMessage(Evento.INICIO_TURNO);
         actualizarvista();
-        //notifyMessage();
     }
 
-    private static ArrayList<String> getCartas() {
+    public static ArrayList<String> getCartas() {
         ArrayList<String> mesa=new ArrayList<>();
         for (int j = 0; j < cartas.size(); j++) {
             mesa.add(cartas.get(j).getColor() + " " + cartas.get(j).getNumero());
@@ -59,7 +66,7 @@ public class Juego implements Subject{
         return mesa;
     }
 
-    public static ArrayList<String> getMano(int i) {
+    public ArrayList<String> getMano(int i) {
         ArrayList<String> mano=new ArrayList<>();
         for (int j = 0; j < jugadores.get(i).getMano().size(); j++) {
             mano.add(jugadores.get(i).getMano().get(j).getColor() + " " + jugadores.get(i).getMano().get(j).getNumero());
@@ -68,9 +75,7 @@ public class Juego implements Subject{
     }
 
     private void actualizarvista(){
-        for (int i = 0; i < jugadores.size(); i++) {
-            controlador.mostrar(getCartas(),getMano(i));
-        }
+            notifyMessage(Evento.MOSTRAR_MESA);
     }
     public void robar(){
         //0 es temporal------------------------------------------
@@ -172,8 +177,8 @@ public class Juego implements Subject{
             turno=0;
         }
         else turno++;
-        controlador.setfase();//temporal
         actualizarvista();
+        notifyMessage(Evento.INICIO_TURNO);
     }
 //----------------------------subject-----------------------------------------------
     @Override

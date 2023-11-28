@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 
-public class VistaConsola implements IVista{
+public class VistaConsola implements IVista,Observer{
     private String nombre;
     private JTabbedPane tabbedPane1;
     private JButton button1;
@@ -26,23 +26,13 @@ public class VistaConsola implements IVista{
     private int indicebonus;
     private boolean canto = true;
 
-    @Override
-    public void setFaseactual() {
-        faseactual = fase.draw;
-    }
 
-    @Override
-    public void setControlador(Controlador controlador) {
-        this.controlador = controlador;
-    }
-
-    @Override
-    public void mesaactualizada(ArrayList<String> cartasMesa,ArrayList<String> cartasMano) {
-        this.mano = cartasMano;
-        this.cartasMesa = cartasMesa;
+    private void mostrarmesa(){
         mesaactualizada();
     }
     public void mesaactualizada(){
+        mano = controlador.getMano();
+        cartasMesa = controlador.getMesa();
         txtSalida.append("mano:" + "\n");
         for (int i = 0; i < mano.size(); i++) {
             txtSalida.append("carta " + (i + 1) + mano.get(i) + "\n");
@@ -52,8 +42,6 @@ public class VistaConsola implements IVista{
             txtSalida.append("carta " + (i + 1) + cartasMesa.get(i) + "\n");
         }
     }
-
-
     private enum fase{
         draw,
         mainfase,
@@ -62,12 +50,12 @@ public class VistaConsola implements IVista{
         salaespera
     }
 
-    public void setFaseactual(fase faseactual) {
-        this.faseactual = faseactual;
-    }
-
     //-------------------------comportamiento---------------------------------------------------
-    public VistaConsola() {
+    public VistaConsola(Controlador controlador) {
+        this.controlador = controlador;
+        //hago estos dos por orden de ejecucion, yo lo hubiera hecho en el main
+        controlador.setVista((IVista) this);
+        controlador.setobserver((Observer)this);
         this.frame = new JFrame("VistaConsola");
         //frame.setContentPane(contentPane);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -83,9 +71,11 @@ public class VistaConsola implements IVista{
         txtEntrada.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                txtSalida.append(txtEntrada.getText() + "\n");
-                procesarEntrada(txtEntrada.getText());
+                String entrada = txtEntrada.getText();
+                txtSalida.append(entrada + "\n");
                 txtEntrada.setText("");
+                procesarEntrada(entrada);
+
             }
         });
         button1.addActionListener(new ActionListener() {
@@ -102,6 +92,10 @@ public class VistaConsola implements IVista{
         input = input.trim();
         if (input.isEmpty())
             return;
+        if (mano.size()==0){
+            if(faseactual != fase.salaespera)
+                controlador.hayganador();
+        }
         if (mano.size() == 2){
             canto = false;
             if (input.toLowerCase() == "dos"){
@@ -143,8 +137,8 @@ public class VistaConsola implements IVista{
     }
     private void draw(String input){
         if (Objects.equals(input, "si")){
-            controlador.robar();
             faseactual = fase.mainfase;
+            controlador.robar();
         }
         if (Objects.equals(input, "no")){
             faseactual = fase.mainfase;
@@ -231,23 +225,23 @@ public class VistaConsola implements IVista{
             mesaactualizada();
     }
     private void mostrardraw(){
-        txtSalida.append("desea agarrar una carta?");
+        txtSalida.append("desea agarrar una carta?" + "\n");
     }
     private void mostrarmain(){
         if (indice == 0){
             indice = cartasMesa.size();
         }
-        txtSalida.append("que carta de la mano desea emparejar con la carta " + indice);
+        txtSalida.append("que carta de la mano desea emparejar con la carta " + indice + "\n");
     }
     private void mostrarbonus(){
         mesaactualizada();
         if (controlador.booleanbonus()){
-            txtSalida.append("ingrese carta que desee descartar por bonus de color");
+            txtSalida.append("ingrese carta que desee descartar por bonus de color" + "\n");
         }
-        else txtSalida.append("ingrese algo en el input");
+        else txtSalida.append("ingrese algo en el input" + "\n");
 
     }
-    public void mostrarMenu(){
+    private void mostrarMenu(){
         switch(faseactual){
             case draw: mostrardraw();
             break;
@@ -260,5 +254,27 @@ public class VistaConsola implements IVista{
         }
 
     }
-
+    private void finpartida(){
+        txtSalida.append("ganó el jugador: " + controlador.ganador());
+        faseactual = fase.opponent;
+    }
+    private void inicioturno(){
+        if (controlador.getTurno()){
+            faseactual = fase.draw;
+        }
+        else faseactual = fase.opponent;
+    }
+    @Override
+    public void update(Subject o, Object arg) {
+        if (arg instanceof Evento){
+            switch ((Evento) arg){
+                case INICIO_TURNO:inicioturno();
+                break;
+                case MOSTRAR_MESA:mostrarmesa();
+                break;
+                case FIN_PARTIDA:finpartida();
+                break;
+            }
+        }
+    }
 }

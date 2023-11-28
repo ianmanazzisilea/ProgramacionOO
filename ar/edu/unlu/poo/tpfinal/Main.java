@@ -1,18 +1,13 @@
 package ar.edu.unlu.poo.tpfinal;
 
-import javax.swing.*;
-
 public class Main {
     public static void main(String[] args) {
         Juego modelo = new Juego();
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                VistaConsola vista1 = new VistaConsola();
-                Controlador controlador = new Controlador(vista1,modelo);
-                modelo.setControlador(controlador);
-                vista1.setControlador(controlador);
-            }
-        });
+        Jugador jugador = new Jugador("Alonso");
+        Jugador jugador1 = new Jugador("Eustaquio");
+        Controlador controlador = new Controlador(modelo,jugador);
+        Controlador controlador1 = new Controlador(modelo,jugador1);
+        IVista vista = new VistaConsola(controlador);
+        IVista vista1 = new VistaConsola(controlador1);
     }
 }
