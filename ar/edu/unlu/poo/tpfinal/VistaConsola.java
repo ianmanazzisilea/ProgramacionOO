@@ -16,6 +16,7 @@ public class VistaConsola implements IVista,Observer{
     private JPanel Juego;
     private JPanel Reglas;
     private JTextArea txtSalida;
+    private JTextPane textPane1;
     private JFrame frame;
     private fase faseactual = fase.salaespera;
     private ArrayList<String> mano = new ArrayList<>();
@@ -62,10 +63,13 @@ public class VistaConsola implements IVista,Observer{
         //frame.pack();
         tabbedPane1.setTitleAt(0,"juego");
         tabbedPane1.setTitleAt(0,"reglas");
-        frame = new JFrame("<class name>");
+        frame = new JFrame(controlador.getnombre());
         frame.setContentPane(contentPane);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
+        textPane1.setText("reglas: " + "\n"  +
+                "si # en mesa los numeros pueden llegar hasta 10"  + "\n" +
+                "aprete 0 para confirmar jugada"  + "\n");
         txtSalida.append("aprete si cuando desee empezar" + "\n");
         frame.setVisible(true);
         txtEntrada.addActionListener(new ActionListener() {

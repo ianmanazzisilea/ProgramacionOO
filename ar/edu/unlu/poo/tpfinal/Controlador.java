@@ -22,7 +22,7 @@ public class Controlador{
         modelo.hayganador(jugador);
     }
     public void robar(){
-        modelo.robar();
+        modelo.robar(jugador);
     }
     public void jugada(ArrayList<String> indicemano,int indicemesa){
         ArrayList<Integer> manojugada = new ArrayList<>();
@@ -30,11 +30,11 @@ public class Controlador{
             int intindicemano = Integer.valueOf(indicemano.get(i));
             manojugada.add(intindicemano);
         }
-        modelo.jugada(manojugada,indicemesa);
+        modelo.jugada(manojugada,indicemesa,jugador);
     }
     public void nocanto(){
-        modelo.robar();
-        modelo.robar();
+        modelo.robar(jugador);
+        modelo.robar(jugador);
     }
     public void pasoturno(){
         modelo.turno();
@@ -64,6 +64,9 @@ public class Controlador{
     public ArrayList<String> getMesa(){
         return modelo.getCartas();
     }
+    public String getnombre(){
+        return jugador.getNombre();
+    }
     public String ganador(){
         return modelo.getGanador();
     }
@@ -74,6 +77,6 @@ public class Controlador{
         return modelo.getBonus();
     }
     public void descartarbonus(int indicemano){
-        modelo.descartarbonus(indicemano);
+        modelo.descartarbonus(indicemano,jugador);
     }
 }

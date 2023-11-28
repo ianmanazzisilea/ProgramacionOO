@@ -38,10 +38,10 @@ public class Juego implements Subject{
         jugadorganador = jugador;
         notifyMessage(Evento.FIN_PARTIDA);
     }
-    public void descartarbonus(int indicemano){
-        Carta carta = jugadores.get(0).getMano().get(indicemano);
+    public void descartarbonus(int indicemano,Jugador jugador){
+        Carta carta = jugador.getMano().get(indicemano);
         cartasbonus.add(carta);
-        jugadores.get(0).desacartar(carta);
+        jugador.desacartar(carta);
     }
 
     //inicio del juego------------------------------------
@@ -66,30 +66,21 @@ public class Juego implements Subject{
         return mesa;
     }
 
-    public ArrayList<String> getMano(int i) {
-        ArrayList<String> mano=new ArrayList<>();
-        for (int j = 0; j < jugadores.get(i).getMano().size(); j++) {
-            mano.add(jugadores.get(i).getMano().get(j).getColor() + " " + jugadores.get(i).getMano().get(j).getNumero());
-        }
-        return mano;
-    }
-
     private void actualizarvista(){
             notifyMessage(Evento.MOSTRAR_MESA);
     }
-    public void robar(){
+    public void robar(Jugador jugador){
         //0 es temporal------------------------------------------
-        jugadores.get(0).roba(mazo.getCartaSuperior());
+        jugador.roba(mazo.getCartaSuperior());
         actualizarvista();
     }
-    public void jugada(ArrayList<Integer> indicemano, int indicemesa){
+    public void jugada(ArrayList<Integer> indicemano, int indicemesa,Jugador jugador){
         ArrayList<Carta> jugadamano = new ArrayList<>();
         int comodinnumero = 0;
         int acumulador = 0;
         Carta cartamesa = cartas.get(indicemesa);
         for (int i = 0; i < indicemano.size(); i++) {
-            //el 0 es temporal----------------------------------------------
-            Carta cartajugador = jugadores.get(0).getMano().get(indicemano.get(i));
+            Carta cartajugador = jugador.getMano().get(indicemano.get(i));
             jugadamano.add(cartajugador);
             if (cartajugador.getNumero() == "#"){
                 comodinnumero++;
@@ -104,7 +95,7 @@ public class Juego implements Subject{
                     bonus++;
                 }
                 for (int i = 0; i < indicemano.size(); i++) {
-                    jugadores.get(0).desacartar(jugadamano.get(i));
+                    jugador.desacartar(jugadamano.get(i));
                 }
                 cartas.remove(indicemesa);
                 for (int i = 0; i < jugadamano.size(); i++) {
@@ -121,7 +112,7 @@ public class Juego implements Subject{
                         bonus++;
                     }
                     for (int i = 0; i < indicemano.size(); i++) {
-                        jugadores.get(0).desacartar(jugadamano.get(i));
+                        jugador.desacartar(jugadamano.get(i));
                     }
                     cartas.remove(indicemesa);
                     for (int i = 0; i < jugadamano.size(); i++) {
@@ -138,7 +129,7 @@ public class Juego implements Subject{
                     bonus++;
                 }
                 for (int i = 0; i < indicemano.size(); i++) {
-                    jugadores.get(0).desacartar(jugadamano.get(i));
+                    jugador.desacartar(jugadamano.get(i));
                 }
                 cartas.remove(indicemesa);
                 for (int i = 0; i < jugadamano.size(); i++) {
@@ -172,6 +163,8 @@ public class Juego implements Subject{
         for (int i = 0; i < cartasbonus.size(); i++) {
             cartas.add(cartasbonus.get(i));
         }
+        cartasbonus.clear();
+        bonus=0;
         //pasar turno
         if (turno == (jugadores.size()-1)){
             turno=0;
