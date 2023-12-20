@@ -48,7 +48,7 @@
                   <component id="59b6" class="javax.swing.JTextArea" binding="txtSalida">
                     <constraints/>
                     <properties>
-                      <background color="-16777216"/>
+                      <background color="-1"/>
                       <caretColor color="-1"/>
                       <disabledTextColor color="-1182209"/>
                       <selectedTextColor color="-394241"/>

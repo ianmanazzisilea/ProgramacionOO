@@ -3,11 +3,12 @@ package ar.edu.unlu.poo.tpfinal;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Objects;
 
 
-public class VistaConsola implements IVista,Observer{
+public class VistaConsola implements IVista, Serializable {
     private JTabbedPane tabbedPane1;
     private JButton button1;
     private JTextField txtEntrada;
@@ -22,23 +23,22 @@ public class VistaConsola implements IVista,Observer{
     private int indice;
     private ArrayList<String> jugada = new ArrayList<>();
     private int indicebonus;
+    private JPanel Juego;
+    private JPanel Reglas;
     private boolean canto = true;
-
-
-    private void mostrarmesa(){
-        mesaactualizada();
-    }
     public void mesaactualizada(){
+        txtSalida.setText("");
         mano = controlador.getMano();
         cartasMesa = controlador.getMesa();
         txtSalida.append("mano:" + "\n");
         for (int i = 0; i < mano.size(); i++) {
-            txtSalida.append("carta " + (i + 1) + mano.get(i) + "\n");
+            txtSalida.append("carta " + (i + 1) + " " + mano.get(i) + "\n");
         }
         txtSalida.append("mesa:" + "\n");
         for (int i = 0; i < cartasMesa.size(); i++) {
-            txtSalida.append("carta " + (i + 1) + cartasMesa.get(i) + "\n");
+            txtSalida.append("carta " + (i + 1) + " " + cartasMesa.get(i) + "\n");
         }
+        mostrarMenu();
     }
     private enum fase{
         draw,
@@ -51,13 +51,10 @@ public class VistaConsola implements IVista,Observer{
     //-------------------------comportamiento---------------------------------------------------
     public VistaConsola(Controlador controlador) {
         this.controlador = controlador;
-        //hago estos dos por orden de ejecucion, yo lo hubiera hecho en el main
+        //hago esto por orden de ejecucion, yo lo hubiera hecho en el main
         controlador.setVista((IVista) this);
-        controlador.setobserver((Observer)this);
         this.frame = new JFrame("VistaConsola");
-        //frame.setContentPane(contentPane);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        //frame.pack();
         tabbedPane1.setTitleAt(0,"juego");
         tabbedPane1.setTitleAt(0,"reglas");
         frame = new JFrame(controlador.getnombre());
@@ -72,6 +69,7 @@ public class VistaConsola implements IVista,Observer{
         txtEntrada.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                //txtSalida.setText("");
                 String entrada = txtEntrada.getText();
                 txtSalida.append(entrada + "\n");
                 txtEntrada.setText("");
@@ -126,8 +124,9 @@ public class VistaConsola implements IVista,Observer{
                     break;
             }
         }
-
-        mostrarMenu();
+        if (Objects.requireNonNull(faseactual) == fase.bonus) {
+            mostrarMenu();
+        }
 
     }
     private void salaespera(String input){
@@ -223,7 +222,7 @@ public class VistaConsola implements IVista,Observer{
     }
     //-------------------visual-----------------------------------------------
     private void mostraropponent(){
-            mesaactualizada();
+            //mesaactualizada();
     }
     private void mostrardraw(){
         txtSalida.append("desea agarrar una carta?" + "\n");
@@ -235,7 +234,7 @@ public class VistaConsola implements IVista,Observer{
         txtSalida.append("que carta de la mano desea emparejar con la carta " + indice + "\n");
     }
     private void mostrarbonus(){
-        mesaactualizada();
+        //mesaactualizada();
         if (controlador.booleanbonus()){
             txtSalida.append("ingrese carta que desee descartar por bonus de color" + "\n");
         }
@@ -255,27 +254,14 @@ public class VistaConsola implements IVista,Observer{
         }
 
     }
-    private void finpartida(){
+    public void finpartida(){
         txtSalida.append("ganó el jugador: " + controlador.ganador());
         faseactual = fase.opponent;
     }
-    private void inicioturno(){
+    public void inicioturno(){
         if (controlador.getTurno()){
             faseactual = fase.draw;
         }
         else faseactual = fase.opponent;
-    }
-    @Override
-    public void update(Subject o, Object arg) {
-        if (arg instanceof Evento){
-            switch ((Evento) arg){
-                case INICIO_TURNO:inicioturno();
-                break;
-                case MOSTRAR_MESA:mostrarmesa();
-                break;
-                case FIN_PARTIDA:finpartida();
-                break;
-            }
-        }
     }
 }

@@ -1,16 +1,38 @@
 package ar.edu.unlu.poo.tpfinal;
 
+import ar.edu.unlu.rmimvc.cliente.IControladorRemoto;
+import ar.edu.unlu.rmimvc.observer.IObservableRemoto;
+
+import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 
-public class Controlador{
+public class Controlador implements IControladorRemoto, Serializable {
     private IVista vista;
-    private Juego modelo;
-    private Jugador jugador;
-    public Controlador(Juego modelo, Jugador jugador) {
-        //this.vista = vista;
-        this.modelo = modelo;
-        this.modelo.ingresarJugador(jugador);
-        this.jugador = jugador;
+    private IJuego modelo;
+    private int indice;
+    public <T extends IObservableRemoto>Controlador(T modelo) {
+        try{
+            this.setModeloRemoto(modelo);
+        } catch(RemoteException e){
+            e.printStackTrace();
+        }
+    }
+    public Controlador(int contadorindice){
+        this.indice = contadorindice;
+    }
+
+    public void setJugador() {
+        try {
+            try{
+                modelo.ingresarJugador();
+            }catch (NullPointerException e){
+                e.printStackTrace();
+            }
+        }catch (RemoteException e){
+            e.printStackTrace();
+        }
+
     }
 
     public void setVista(IVista vista) {
@@ -18,10 +40,20 @@ public class Controlador{
     }
 
     public void hayganador(){
-        modelo.hayganador(jugador);
+        try {
+            modelo.hayganador();
+        }catch (RemoteException e){
+            e.printStackTrace();
+        }
+
     }
     public void robar(){
-        modelo.robar(jugador);
+        try {
+            modelo.robar();
+        }catch (RemoteException e){
+            e.printStackTrace();
+        }
+
     }
     public void jugada(ArrayList<String> indicemano,int indicemesa){
         ArrayList<Integer> manojugada = new ArrayList<>();
@@ -29,50 +61,129 @@ public class Controlador{
             int intindicemano = Integer.valueOf(indicemano.get(i));
             manojugada.add(intindicemano);
         }
-        modelo.jugada(manojugada,indicemesa,jugador);
+        try {
+            modelo.jugada(manojugada,indicemesa);
+        }catch (RemoteException e){
+            e.printStackTrace();
+        }
+
     }
     public void nocanto(){
-        modelo.robar(jugador);
-        modelo.robar(jugador);
+        try {
+            modelo.robar();
+            modelo.robar();
+        }catch (RemoteException e){
+            e.printStackTrace();
+        }
+
     }
     public void pasoturno(){
-        modelo.turno();
-    }
+        try {
+            modelo.turno();
+        }catch (RemoteException e){
+            e.printStackTrace();
+        }
 
-    public void setobserver(Observer observer){
-        modelo.attach(observer);
     }
     public void empezar(){
-        modelo.empezar();
+        try {
+            //setModeloRemoto((IObservableRemoto) this);
+            modelo.empezar();
+        }catch (RemoteException e){
+            e.printStackTrace();
+        }
+
     }
     //temporal
 
     public boolean getTurno(){
-        return modelo.getTurno(jugador);
+        try {
+            return modelo.getTurno(indice);
+        }catch (RemoteException e){
+            e.printStackTrace();
+            return false;
+        }
+
     }
     public ArrayList<String> getMano() {
-        ArrayList<String> mano=new ArrayList<>();
-        for (int j = 0; j < jugador.getMano().size(); j++) {
-            mano.add(jugador.getMano().get(j).getColor() + " " + jugador.getMano().get(j).getNumero());
+        try {
+            ArrayList<String> mano = modelo.getMano(indice);
+            return mano;
+        }catch (RemoteException e){
+            e.printStackTrace();
+            return new ArrayList<>();
         }
-        return mano;
+
     }
     public ArrayList<String> getMesa(){
-        return modelo.getCartas();
+        try {
+            return modelo.getCartas();
+        }catch (RemoteException e){
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+
     }
     public String getnombre(){
-        return jugador.getNombre();
+        try {
+            return modelo.getNombre(indice);
+        }catch (RemoteException e){
+            e.printStackTrace();
+            return "";
+        }
+
     }
     public String ganador(){
-        return modelo.getGanador();
+        try {
+            return modelo.getGanador();
+        }catch (RemoteException e){
+            e.printStackTrace();
+            return "";
+        }
+
     }
     public boolean booleanbonus(){
-        return modelo.getBBonus();
+        try {
+            return modelo.getBBonus();
+        }catch (RemoteException e){
+            e.printStackTrace();
+            return false;
+        }
+
     }
     public int bonus(){
-        return modelo.getBonus();
+        try {
+            return modelo.getBonus();
+        }catch (RemoteException e){
+            e.printStackTrace();
+            return 0;
+        }
+
     }
     public void descartarbonus(int indicemano){
-        modelo.descartarbonus(indicemano,jugador);
+        try {
+            modelo.descartarbonus(indicemano);
+        }catch (RemoteException e){
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
+    public void actualizar(IObservableRemoto modelo, Object o) throws RemoteException {
+        if (o instanceof Evento){
+            switch ((Evento) o){
+                case INICIO_TURNO:vista.inicioturno();
+                    break;
+                case MOSTRAR_MESA:vista.mesaactualizada();
+                    break;
+                case FIN_PARTIDA:vista.finpartida();
+                    break;
+            }
+        }
+    }
+    @Override
+    public <T extends IObservableRemoto> void setModeloRemoto(T modeloRemoto) throws RemoteException {
+        this.modelo=(IJuego) modeloRemoto;
     }
 }
