@@ -1,8 +1,9 @@
 package ar.edu.unlu.poo.tpfinal;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Mesa {
+public class Mesa implements Serializable {
     private ArrayList<Carta> cartas = new ArrayList<>();
 
     public Carta getCarta(int indice) {

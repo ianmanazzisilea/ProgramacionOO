@@ -4,5 +4,5 @@ public interface IVista {
     void mesaactualizada();
     void inicioturno();
     void finpartida();
-
+    String getnombre();
 }

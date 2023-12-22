@@ -61,6 +61,7 @@ public class VistaGrafica implements IVista, Serializable {
         button1.setLabel("empezar");
         //textArea2.setText("");
         txtSalida.append("aprete empezar en opciones cuando desee empezar" + "\n");
+        recuperartop();
         frame.setVisible(true);
         button1.addActionListener(new ActionListener() {
             @Override
@@ -69,6 +70,18 @@ public class VistaGrafica implements IVista, Serializable {
                 procesarEntrada((String) entrada.getSelectedItem());
             }
         });
+    }
+    private void recuperartop(){
+        Object[] lista = controlador.getscore();//5
+        int i = 0;
+        if (lista!=null){
+            while(i < 5 && lista[i]!= null) {
+                Object[] jugador = (Object[]) lista[i];
+                textArea2.append(jugador[0] + " " + jugador[1]);
+                i++;
+            }
+        }
+
     }
     private void procesarEntrada(String input){
         if (mano.size()==0){
@@ -135,6 +148,7 @@ public class VistaGrafica implements IVista, Serializable {
         }
         if (Integer.valueOf(input) > -1){
             jugada.add(String.valueOf(Integer.valueOf(input)));
+            //entrada.remove(Integer.valueOf(input));
         }
         if (Integer.valueOf(input) == -1){
             if (indice == 1){
@@ -145,7 +159,7 @@ public class VistaGrafica implements IVista, Serializable {
                         txtSalida.append("carta " + (Integer.valueOf(jugada.get(i)) + 1) + "\n");
                     }
                     txtSalida.append(" con la carta " + indice + " de la mesa" + "\n");
-
+                    opcionesmain();
                 }
                 faseactual = fase.bonus;
                 indice--;
@@ -165,7 +179,8 @@ public class VistaGrafica implements IVista, Serializable {
             jugada = new ArrayList<>();
         }
     }
-    private void bonus(String input){
+    private void bonus(String in){
+
         if (indicebonus == 0){
             indicebonus = controlador.bonus();
             if(indicebonus == 0){
@@ -173,30 +188,50 @@ public class VistaGrafica implements IVista, Serializable {
                 controlador.pasoturno();
             }
         }
+
         if (indicebonus > 1){
+            String input="-1";
+            for (int i = 0; i < mano.size(); i++) {
+                if (mano.get(i)==in){
+                    input = String.valueOf(i);
+                    //mano.set(i,"");
+                    break;
+                }
+            }
             if (Integer.valueOf(input)>=1){
                 if (Integer.valueOf(input)<= mano.size()){
                     indicebonus--;
-                    controlador.descartarbonus(Integer.valueOf(input)-1);
+                    controlador.descartarbonus(Integer.valueOf(input));
+                    opcionesbonus();
+                    mano.remove(Integer.valueOf(input));
                 }
             }
 
         }
         if (indicebonus == 1){
+            String input="-1";
+            for (int i = 0; i < mano.size(); i++) {
+                if (mano.get(i)==in){
+                    input = String.valueOf(i);
+                    //mano.set(i,"");
+                    break;
+                }
+            }
             if (Integer.valueOf(input)>=1){
                 if (Integer.valueOf(input)<= mano.size()){
                     indicebonus--;
-                    controlador.descartarbonus(Integer.valueOf(input)-1);
+                    controlador.descartarbonus(Integer.valueOf(input));
                     //pasa turno
                     faseactual = fase.opponent;
                     controlador.pasoturno();
+                    entrada.removeAllItems();
                 }
             }
 
         }
-        if (!canto){
+        /*if (!canto){
             controlador.nocanto();
-        }
+        }*/
     }
         //-------------------visual-----------------------------------------------
     private void mostraropponent(){
@@ -219,6 +254,7 @@ public class VistaGrafica implements IVista, Serializable {
     }
     private void opcionesespera(){
         entrada.removeAllItems();
+        button1.setLabel("esperando");
         entrada.addItem("si");
         entrada.addItem("no");
 
@@ -285,5 +321,18 @@ public class VistaGrafica implements IVista, Serializable {
     public void finpartida() {
         txtSalida.append("ganó el jugador: " + controlador.ganador());
         faseactual = fase.opponent;
+    }
+
+    @Override
+    public String getnombre() {
+        String ganador = (String) JOptionPane.showInputDialog(
+                null,
+                "Ha ganado", "Elija su nombre",
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                null,
+                000
+        );
+        return ganador;
     }
 }

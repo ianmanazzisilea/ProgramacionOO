@@ -25,6 +25,7 @@ public class VistaConsola implements IVista, Serializable {
     private int indicebonus;
     private JPanel Juego;
     private JPanel Reglas;
+    private JTextArea textArea1;
     private boolean canto = true;
     public void mesaactualizada(){
         txtSalida.setText("");
@@ -65,6 +66,7 @@ public class VistaConsola implements IVista, Serializable {
                 "si # en mesa los numeros pueden llegar hasta 10"  + "\n" +
                 "aprete 0 para confirmar jugada"  + "\n");
         txtSalida.append("aprete si cuando desee empezar" + "\n");
+        recuperartop();
         frame.setVisible(true);
         txtEntrada.addActionListener(new ActionListener() {
             @Override
@@ -257,6 +259,26 @@ public class VistaConsola implements IVista, Serializable {
     public void finpartida(){
         txtSalida.append("ganó el jugador: " + controlador.ganador());
         faseactual = fase.opponent;
+    }
+
+    @Override
+    public String getnombre() {
+        String ganador = (String) JOptionPane.showInputDialog(
+                null,
+                "Ha ganado", "Elija su nombre",
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                null,
+                null
+        );
+        return ganador;
+    }
+    private void recuperartop(){
+        Object[] lista = controlador.getscore();//5
+        for (int i = 0; i < 5; i++) {
+            Object[] jugador = (Object[]) lista[i];
+            textArea1.append(jugador[0] + " " + jugador[1]);
+        }
     }
     public void inicioturno(){
         if (controlador.getTurno()){

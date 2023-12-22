@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 public interface IJuego extends IObservableRemoto {
 
+
     //----------------------------------GETTERS-------------------------------
     boolean getTurno(int indice) throws RemoteException;
     ArrayList<String> getCartas()throws RemoteException;
@@ -43,4 +44,9 @@ public interface IJuego extends IObservableRemoto {
 
     //turno----------------------------------------------------
     void turno() throws RemoteException;
+
+    void recuperarturno()throws RemoteException;
+
+    Object[] getscore()throws RemoteException;
+    void guardarscore(String nombrenuevo)throws RemoteException;
 }

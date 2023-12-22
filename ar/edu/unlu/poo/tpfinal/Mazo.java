@@ -1,8 +1,9 @@
 package ar.edu.unlu.poo.tpfinal;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Mazo {
+public class Mazo implements Serializable {
     static private ArrayList<Carta> cartas = new ArrayList();
     static private ArrayList<Carta> descarte = new ArrayList();
 

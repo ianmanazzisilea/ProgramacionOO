@@ -6,6 +6,7 @@ import ar.edu.unlu.rmimvc.observer.IObservableRemoto;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Controlador implements IControladorRemoto, Serializable {
     private IVista vista;
@@ -19,13 +20,13 @@ public class Controlador implements IControladorRemoto, Serializable {
         }
     }
     public Controlador(int contadorindice){
-        this.indice = contadorindice;
+        //this.indice = contadorindice;
     }
 
     public void setJugador() {
         try {
             try{
-                modelo.ingresarJugador();
+                indice = modelo.ingresarJugador();
             }catch (NullPointerException e){
                 e.printStackTrace();
             }
@@ -135,6 +136,11 @@ public class Controlador implements IControladorRemoto, Serializable {
     }
     public String ganador(){
         try {
+            String turno = modelo.getGanador();
+            if (Objects.equals(turno, String.valueOf(indice))){
+                String nombre = vista.getnombre();
+                modelo.guardarscore(nombre);
+            }
             return modelo.getGanador();
         }catch (RemoteException e){
             e.printStackTrace();
@@ -167,6 +173,16 @@ public class Controlador implements IControladorRemoto, Serializable {
             e.printStackTrace();
         }
 
+    }
+    public Object[] getscore(){
+        try {
+            return modelo.getscore();
+        }catch (RemoteException e){
+            e.printStackTrace();
+            Object[] vacio = new Object[0];
+            vacio[0] = "";
+            return vacio;
+        }
     }
 
     @Override

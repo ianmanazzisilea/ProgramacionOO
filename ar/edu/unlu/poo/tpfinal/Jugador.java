@@ -1,8 +1,9 @@
 package ar.edu.unlu.poo.tpfinal;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Jugador {
+public class Jugador implements Serializable {
     private ArrayList<Carta> mano = new ArrayList();
     private String nombre;
     public Jugador(String nombre){

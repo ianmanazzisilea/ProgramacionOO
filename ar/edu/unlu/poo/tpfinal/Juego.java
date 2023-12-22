@@ -1,5 +1,6 @@
 package ar.edu.unlu.poo.tpfinal;
 
+import ar.edu.unlu.poo.tpfinal.services.Serializador;
 import ar.edu.unlu.rmimvc.cliente.IControladorRemoto;
 import ar.edu.unlu.rmimvc.observer.ObservableRemoto;
 
@@ -13,12 +14,33 @@ public class Juego extends ObservableRemoto implements IJuego, Serializable {
     static private Mesa mesa = new Mesa();
     static private Mazo mazo = new Mazo();
     static private int turno=0;
+    static private int turnototal = 0;
     static private int bonus = 0;
     static private ArrayList<Carta> cartasbonus = new ArrayList<>();
     static private Jugador jugadorganador;
     static private int clientes = 0;
-
+    private static Serializador backup = new Serializador("backup.dat");
+    private static Serializador score = new Serializador("score.dat");
     //----------------------------------GETTERS-------------------------------
+    public static ArrayList<Jugador> getJugadores() {
+        return jugadores;
+    }
+
+    public static int getTurno() {
+        return turno;
+    }
+
+    public static int getClientes() {
+        return clientes;
+    }
+
+    public static Mazo getMazo() {
+        return mazo;
+    }
+
+    public static Mesa getMesa() {
+        return mesa;
+    }
     @Override
     public boolean getTurno(int indice)throws RemoteException{
         if (jugadores.get(indice)==jugadores.get(turno)){
@@ -46,13 +68,13 @@ public class Juego extends ObservableRemoto implements IJuego, Serializable {
     }
     @Override
     public String getGanador()throws RemoteException {
-        return jugadorganador.getNombre();
+        return String.valueOf(turno);
     }
 
     @Override
     public Integer ingresarJugador()throws RemoteException{
-        jugadores.add(new Jugador("jugador" + String.valueOf(jugadores.size() + 1)));
-        return jugadores.size();
+        jugadores.add(new Jugador("jugador" + (jugadores.size() + 1)));
+        return jugadores.size()-1;
     }
     @Override
     public int getBonus()throws RemoteException {
@@ -89,15 +111,28 @@ public class Juego extends ObservableRemoto implements IJuego, Serializable {
     @Override
     public void empezar() throws RemoteException{
         //repartir cartas
-        for (int i = 0; i < 7; i++) {
+        for (int i = 0; i < 1; i++) {
             for (int j = 0; j < jugadores.size(); j++) {
                 jugadores.get(j).roba(mazo.getCartaSuperior());
             }
         }
         mesa.add(mazo.getCartaSuperior());
         mesa.add(mazo.getCartaSuperior());
+        mesa.add(mazo.getCartaSuperior());
+        mesa.add(mazo.getCartaSuperior());
+        mesa.add(mazo.getCartaSuperior());
+        mesa.add(mazo.getCartaSuperior());
+        mesa.add(mazo.getCartaSuperior());
+        mesa.add(mazo.getCartaSuperior());
+        mesa.add(mazo.getCartaSuperior());
+        mesa.add(mazo.getCartaSuperior());
         notificarObservadores(Evento.INICIO_TURNO);
         actualizarvista();
+    }
+
+    @Override
+    public void actualizarvista() throws RemoteException {
+        IJuego.super.actualizarvista();
     }
 
 
@@ -142,12 +177,60 @@ public class Juego extends ObservableRemoto implements IJuego, Serializable {
         cartasbonus.clear();
         bonus=0;
         //pasar turno
+        turnototal++;
         if (turno == (jugadores.size()-1)){
             turno=0;
         }
         else turno++;
+        guardarturno();
         actualizarvista();
         notificarObservadores(Evento.INICIO_TURNO);
+    }
+//----------------------------serializable------------------------------------------
+    private void guardarturno()throws RemoteException{
+        backup.writeOneObject(this);
+    }
+
+    @Override
+    public void recuperarturno()throws RemoteException{
+        Object objeto = backup.readObjects();
+        Juego modelo = (Juego) objeto;
+        /*jugadores = modelo.getJugadores();
+        mesa = modelo.getMesa();
+        mazo = modelo.getMazo();
+        turno = modelo.getTurno();
+        clientes = modelo.getClientes();*/
+        actualizarvista();
+        notificarObservadores(Evento.INICIO_TURNO);
+    }
+    @Override
+    public Object[] getscore()throws RemoteException{
+        return score.readObjects();
+    }
+    @Override
+    public void guardarscore(String nombrenuevo)throws RemoteException{
+        Object[] mejores = score.readObjects();
+        if (mejores.length > 0){
+            int cont = 0;
+            Object[] tur = new Object[2];
+            tur[0] = String.valueOf(turnototal);
+            tur[1] = nombrenuevo;
+            while (cont < 5 && cont < mejores.length){
+                Object[] mejor =(Object[]) mejores[cont];//0-4
+                if (Integer.valueOf((String) tur[0]) > Integer.valueOf((String) mejor[0])){
+                    Object[] aux =(Object[]) mejores[cont];
+                    mejores[cont] = tur;
+                    tur = aux;
+                }
+                cont++;
+            }
+        }else{
+            Object[] tur = new Object[2];
+            tur[0] = String.valueOf(turnototal);
+            tur[1] = nombrenuevo;
+            mejores[0] = tur;
+        }
+        score.addOneObject(mejores);
     }
 //----------------------------subject-----------------------------------------------
     //@Override
