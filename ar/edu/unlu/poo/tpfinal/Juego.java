@@ -19,7 +19,12 @@ public class Juego extends ObservableRemoto implements IJuego, Serializable {
     static private ArrayList<Carta> cartasbonus = new ArrayList<>();
     static private Jugador jugadorganador;
     static private int clientes = 0;
-    private static Serializador backup = new Serializador("backup.dat");
+    private static Serializador backup_jugadores = new Serializador("backupj.dat");
+    private static Serializador backup_mesa = new Serializador("backupme.dat");
+    private static Serializador backup_mazo = new Serializador("backupma.dat");
+    private static Serializador backup_turno = new Serializador("backupt.dat");
+    private static Serializador backup_clientes = new Serializador("backupc.dat");
+    private static Serializador backup_turnototal = new Serializador("backuptt.dat");
     private static Serializador score = new Serializador("score.dat");
     //----------------------------------GETTERS-------------------------------
     public static ArrayList<Jugador> getJugadores() {
@@ -111,19 +116,11 @@ public class Juego extends ObservableRemoto implements IJuego, Serializable {
     @Override
     public void empezar() throws RemoteException{
         //repartir cartas
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 7; i++) {
             for (int j = 0; j < jugadores.size(); j++) {
                 jugadores.get(j).roba(mazo.getCartaSuperior());
             }
         }
-        mesa.add(mazo.getCartaSuperior());
-        mesa.add(mazo.getCartaSuperior());
-        mesa.add(mazo.getCartaSuperior());
-        mesa.add(mazo.getCartaSuperior());
-        mesa.add(mazo.getCartaSuperior());
-        mesa.add(mazo.getCartaSuperior());
-        mesa.add(mazo.getCartaSuperior());
-        mesa.add(mazo.getCartaSuperior());
         mesa.add(mazo.getCartaSuperior());
         mesa.add(mazo.getCartaSuperior());
         notificarObservadores(Evento.INICIO_TURNO);
@@ -188,18 +185,28 @@ public class Juego extends ObservableRemoto implements IJuego, Serializable {
     }
 //----------------------------serializable------------------------------------------
     private void guardarturno()throws RemoteException{
-        backup.writeOneObject(this);
+        backup_jugadores.writeOneObject(jugadores);
+        backup_mesa.writeOneObject(mesa);
+        backup_mazo.writeOneObject(mazo);
+        backup_turno.writeOneObject(turno);
+        backup_clientes.writeOneObject(clientes);
+        backup_turnototal.writeOneObject(turnototal);
     }
 
     @Override
     public void recuperarturno()throws RemoteException{
-        Object objeto = backup.readObjects();
-        Juego modelo = (Juego) objeto;
-        /*jugadores = modelo.getJugadores();
-        mesa = modelo.getMesa();
-        mazo = modelo.getMazo();
-        turno = modelo.getTurno();
-        clientes = modelo.getClientes();*/
+        Object objetojugador = backup_jugadores.readObjects();
+        Object objetomesa = backup_mesa.readObjects();
+        Object objetomazo = backup_mazo.readObjects();
+        Object objetoturno = backup_turno.readObjects();
+        Object objetoclientes = backup_clientes.readObjects();
+        Object objetott = backup_turnototal.readObjects();
+        jugadores = (ArrayList<Jugador>) objetojugador;
+        mesa = (Mesa) objetomesa;
+        mazo = (Mazo) objetomazo;
+        turno = (Integer) objetoturno;
+        clientes = (Integer) objetoclientes;
+        turnototal = (Integer) objetott;
         actualizarvista();
         notificarObservadores(Evento.INICIO_TURNO);
     }

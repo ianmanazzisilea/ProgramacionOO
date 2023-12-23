@@ -15,6 +15,7 @@ public class VistaGrafica implements IVista, Serializable {
     private JComboBox entrada;
     private JTextArea textArea2;
     private JButton button1;
+    private JButton cargarPartidaButton;
     private ArrayList<String> mano = new ArrayList<>();
     private Controlador controlador;
     private ArrayList<String> cartasMesa = new ArrayList<>();
@@ -30,11 +31,11 @@ public class VistaGrafica implements IVista, Serializable {
         cartasMesa = controlador.getMesa();
         txtSalida.append("mano:" + "\n");
         for (int i = 0; i < mano.size(); i++) {
-            txtSalida.append("carta " + (i + 1) + " " + mano.get(i) + "\n");
+            txtSalida.append(mano.get(i) + "\n");
         }
         txtSalida.append("mesa:" + "\n");
         for (int i = 0; i < cartasMesa.size(); i++) {
-            txtSalida.append("carta " + (i + 1) + " " + cartasMesa.get(i) + "\n");
+            txtSalida.append(cartasMesa.get(i) + "\n");
         }
         mostrarMenu();
     }
@@ -63,6 +64,13 @@ public class VistaGrafica implements IVista, Serializable {
         txtSalida.append("aprete empezar en opciones cuando desee empezar" + "\n");
         recuperartop();
         frame.setVisible(true);
+        cargarPartidaButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                txtSalida.append("cargando partida" + "\n");
+                controlador.cargarpartida();
+            }
+        });
         button1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -154,11 +162,11 @@ public class VistaGrafica implements IVista, Serializable {
             if (indice == 1){
                 if (jugada.size() > 0){
                     controlador.jugada(jugada,indice-1);
-                    txtSalida.append("intentó emparejar: "+"\n");
+                    /*txtSalida.append("intentó emparejar: "+"\n");
                     for (int i = 0; i < jugada.size(); i++) {
                         txtSalida.append("carta " + (Integer.valueOf(jugada.get(i)) + 1) + "\n");
                     }
-                    txtSalida.append(" con la carta " + indice + " de la mesa" + "\n");
+                    txtSalida.append(" con la carta " + indice + " de la mesa" + "\n");*/
                     opcionesmain();
                 }
                 faseactual = fase.bonus;
@@ -167,11 +175,11 @@ public class VistaGrafica implements IVista, Serializable {
             else {
                 if (jugada.size() > 0){
                     controlador.jugada(jugada,indice-1);
-                    txtSalida.append("intentó emparejar: " + "\n");
+                    /*txtSalida.append("intentó emparejar: " + "\n");
                     for (int i = 0; i < jugada.size(); i++) {
                         txtSalida.append("carta " + (Integer.valueOf(jugada.get(i))+1) + "\n");
                     }
-                    txtSalida.append(" con la carta " + indice + " de la mesa" + "\n");
+                    txtSalida.append(" con la carta " + indice + " de la mesa" + "\n");*/
                 }
                 indice--;
                 txtSalida.append("que carta de la mano desea emparejar con la carta " + indice + "\n");
@@ -325,14 +333,7 @@ public class VistaGrafica implements IVista, Serializable {
 
     @Override
     public String getnombre() {
-        String ganador = (String) JOptionPane.showInputDialog(
-                null,
-                "Ha ganado", "Elija su nombre",
-                JOptionPane.QUESTION_MESSAGE,
-                null,
-                null,
-                000
-        );
+        String ganador ="";
         return ganador;
     }
 }

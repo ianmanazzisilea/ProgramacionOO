@@ -62,9 +62,6 @@ public class VistaConsola implements IVista, Serializable {
         frame.setContentPane(contentPane);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
-        textPane1.setText("reglas: " + "\n"  +
-                "si # en mesa los numeros pueden llegar hasta 10"  + "\n" +
-                "aprete 0 para confirmar jugada"  + "\n");
         txtSalida.append("aprete si cuando desee empezar" + "\n");
         recuperartop();
         frame.setVisible(true);
@@ -132,10 +129,8 @@ public class VistaConsola implements IVista, Serializable {
 
     }
     private void salaespera(String input){
-        if (Objects.equals(input, "si")){
             faseactual = fase.opponent;
             controlador.empezar();
-        }
     }
     private void draw(String input){
         if (Objects.equals(input, "si")){
@@ -276,13 +271,14 @@ public class VistaConsola implements IVista, Serializable {
     private void recuperartop(){
         Object[] lista = controlador.getscore();//5
         for (int i = 0; i < 5; i++) {
-            Object[] jugador = (Object[]) lista[i];
-            textArea1.append(jugador[0] + " " + jugador[1]);
+            //Object[] jugador = (Object[]) lista[i];
+            //textArea1.append(jugador[0] + " " + jugador[1]);
         }
     }
     public void inicioturno(){
         if (controlador.getTurno()){
             faseactual = fase.draw;
+            mostrarMenu();
         }
         else faseactual = fase.opponent;
     }

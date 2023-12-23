@@ -3,6 +3,7 @@ package ar.edu.unlu.poo.tpfinal;
 import ar.edu.unlu.rmimvc.cliente.IControladorRemoto;
 import ar.edu.unlu.rmimvc.observer.IObservableRemoto;
 
+import javax.swing.*;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -138,7 +139,11 @@ public class Controlador implements IControladorRemoto, Serializable {
         try {
             String turno = modelo.getGanador();
             if (Objects.equals(turno, String.valueOf(indice))){
-                String nombre = vista.getnombre();
+                String ganador = (String) JOptionPane.showInputDialog(null,
+                        "Elija un nombre","Ah ganado!",1);
+                //JOptionPane.QUESTION_MESSAGE, "Elija su nombre"
+                //);
+                String nombre = ganador;
                 modelo.guardarscore(nombre);
             }
             return modelo.getGanador();
@@ -182,6 +187,13 @@ public class Controlador implements IControladorRemoto, Serializable {
             Object[] vacio = new Object[0];
             vacio[0] = "";
             return vacio;
+        }
+    }
+    public void cargarpartida(){
+        try {
+            modelo.recuperarturno();
+        }catch (RemoteException e){
+            e.printStackTrace();
         }
     }
 
