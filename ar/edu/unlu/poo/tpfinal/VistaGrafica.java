@@ -11,11 +11,13 @@ public class VistaGrafica implements IVista, Serializable {
     private JTabbedPane tabbedPane1;
     private JFrame frame;
     private JPanel contentPane;
-    private JTextArea txtSalida;
+    //private JTextArea txtSalida;
     private JComboBox entrada;
     private JTextArea textArea2;
     private JButton button1;
     private JButton cargarPartidaButton;
+    private JPanel salida;
+    private JList listasalida;
     private ArrayList<String> mano = new ArrayList<>();
     private Controlador controlador;
     private ArrayList<String> cartasMesa = new ArrayList<>();
@@ -24,19 +26,31 @@ public class VistaGrafica implements IVista, Serializable {
     private int indice;
     private ArrayList<String> jugada = new ArrayList<>();
     private int indicebonus;
+    private ArrayList<ImageIcon> amarillo = new ArrayList<>();
+    private ArrayList<ImageIcon> verde = new ArrayList<>();
+    private ArrayList<ImageIcon> rojo = new ArrayList<>();
+    private ArrayList<ImageIcon> azul = new ArrayList<>();
+    private ImageIcon dos;
     @Override
     public void mesaactualizada(){
-        txtSalida.setText("");
+        //txtSalida.setText("");
         mano = controlador.getMano();
         cartasMesa = controlador.getMesa();
-        txtSalida.append("mano:" + "\n");
-        for (int i = 0; i < mano.size(); i++) {
-            txtSalida.append(mano.get(i) + "\n");
+        //txtSalida.append("mano:" + "\n");
+        int cantidadelementossalida = salida.getComponentCount();
+        for (int i = 0; i < cantidadelementossalida; i++) {
+            salida.remove(0);
         }
-        txtSalida.append("mesa:" + "\n");
-        for (int i = 0; i < cartasMesa.size(); i++) {
-            txtSalida.append(cartasMesa.get(i) + "\n");
-        }
+        salida.add(new JLabel("Mano:"));
+            for (int i = 0; i < mano.size(); i++) {
+                JLabel carta = new JLabel();
+                salida.add(insertarimagen(carta,mano.get(i)));
+            }
+        salida.add(new JLabel("Mesa:"));
+            for (int i = 0; i < cartasMesa.size(); i++) {
+                JLabel carta = new JLabel();
+                salida.add(insertarimagen(carta,cartasMesa.get(i)));
+            }
         mostrarMenu();
     }
     private enum fase{
@@ -60,25 +74,77 @@ public class VistaGrafica implements IVista, Serializable {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         button1.setLabel("empezar");
-        //textArea2.setText("");
-        txtSalida.append("aprete empezar en opciones cuando desee empezar" + "\n");
+        cargarimagenes();
+        salida.setLayout(new BoxLayout(salida,BoxLayout.Y_AXIS));
+        salida.add(new JLabel("aprete empezar en opciones cuando desee empezar"));
         recuperartop();
         frame.setVisible(true);
         cargarPartidaButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                txtSalida.append("cargando partida" + "\n");
+                //txtSalida.append("cargando partida" + "\n");
                 controlador.cargarpartida();
             }
         });
         button1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                txtSalida.append(entrada.getSelectedItem() + "\n");
+                //txtSalida.append(entrada.getSelectedItem() + "\n");
                 procesarEntrada((String) entrada.getSelectedItem());
             }
         });
     }
+
+    private void cargarimagenes() {
+        dos = new ImageIcon(("cartas/2.png"));
+        for (int i = 0; i < 10; i++) {
+            amarillo.add(new ImageIcon(("cartas/amarillo/"+ (i+1) + ".png")));
+        }
+        amarillo.add(new ImageIcon(("cartas/amarillo/#.png")));
+        for (int i = 0; i < 10; i++) {
+            verde.add(new ImageIcon(("cartas/verde/"+ (i+1) + ".png")));
+        }
+        verde.add(new ImageIcon(("cartas/verde/#.png")));
+        for (int i = 0; i < 10; i++) {
+            rojo.add(new ImageIcon(("cartas/rojo/"+ (i+1) + ".png")));
+        }
+        rojo.add(new ImageIcon(("cartas/rojo/#.png")));
+        for (int i = 0; i < 10; i++) {
+            azul.add(new ImageIcon(("cartas/azul/"+ (i+1) + ".png")));
+        }
+        azul.add(new ImageIcon(("cartas/azul/#.png")));
+    }
+    private JLabel insertarimagen(JLabel carta,String scarta){
+        //scarta "color numero"
+        String[] arr = new String[2];
+        if (scarta == "2"){
+            carta.setIcon(dos);
+        }else {
+            arr = scarta.split(" ", 2);
+        }
+        if (arr[0] == "amarillo"){
+            if (arr[1] == "#"){
+                carta.setIcon(amarillo.get(10));
+            }else carta.setIcon(amarillo.get(Integer.valueOf(arr[1])-1));
+        }
+        if (arr[0] == "verde"){
+            if (arr[1] == "#"){
+                carta.setIcon(verde.get(10));
+            }else carta.setIcon(verde.get(Integer.valueOf(arr[1])-1));
+        }
+        if (arr[0] == "rojo"){
+            if (arr[1] == "#"){
+                carta.setIcon(rojo.get(10));
+            }else carta.setIcon(rojo.get(Integer.valueOf(arr[1])-1));
+        }
+        if (arr[0] == "azul"){
+            if (arr[1] == "#"){
+                carta.setIcon(azul.get(10));
+            }else carta.setIcon(azul.get(Integer.valueOf(arr[1])-1));
+        }
+        return carta;
+    }
+
     private void recuperartop(){
         Object[] lista = controlador.getscore();//5
         int i = 0;
@@ -182,7 +248,7 @@ public class VistaGrafica implements IVista, Serializable {
                     txtSalida.append(" con la carta " + indice + " de la mesa" + "\n");*/
                 }
                 indice--;
-                txtSalida.append("que carta de la mano desea emparejar con la carta " + indice + "\n");
+                //txtSalida.append("que carta de la mano desea emparejar con la carta " + indice + "\n");
             }
             jugada = new ArrayList<>();
         }
@@ -246,18 +312,18 @@ public class VistaGrafica implements IVista, Serializable {
         //mesaactualizada();
     }
     private void mostrardraw(){
-        txtSalida.append("desea agarrar una carta?" + "\n");
+        salida.add(new JLabel("desea agarrar una carta?"));
     }
     private void mostrarmain(){
         if (indice == 0){
             indice = cartasMesa.size();
         }
-        txtSalida.append("que carta de la mano desea emparejar con la carta " + indice + "\n");
+        salida.add(new JLabel("que carta de la mano desea emparejar con la carta " + indice ));
     }
     private void mostrarbonus(){
         //mesaactualizada();
         if (controlador.booleanbonus()){
-            txtSalida.append("ingrese carta que desee descartar por bonus de color" + "\n");
+            salida.add(new JLabel("ingrese carta que desee descartar por bonus de color"));
         }
     }
     private void opcionesespera(){
@@ -288,7 +354,7 @@ public class VistaGrafica implements IVista, Serializable {
                 entrada.addItem(mano.get(i));
             }
         }
-        else txtSalida.append("aprete en terminar");
+        else salida.add(new JLabel("aprete en terminar"));
         button1.setLabel("terminar");
     }
     private void setearopciones(){
@@ -327,7 +393,7 @@ public class VistaGrafica implements IVista, Serializable {
 
     @Override
     public void finpartida() {
-        txtSalida.append("ganó el jugador: " + controlador.ganador());
+        salida.add(new JLabel("ganó el jugador: " + controlador.ganador()));
         faseactual = fase.opponent;
     }
 

@@ -59,12 +59,12 @@ public class Juego extends ObservableRemoto implements IJuego, Serializable {
     }
     @Override
     public ArrayList<String> getMano(int indice)throws RemoteException{
-        ArrayList<String> nombre = new ArrayList<>();
+        ArrayList<String> mano = new ArrayList<>();
         for (int i = 0; i < jugadores.get(indice).getMano().size(); i++) {
-            nombre.add(jugadores.get(indice).getMano().get(i).getColor() + " " +
+            mano.add(jugadores.get(indice).getMano().get(i).getColor() + " " +
                     jugadores.get(indice).getMano().get(i).getNumero());
         }
-        return nombre;
+        return mano;
     }
     @Override
     public String getNombre(int indice)throws RemoteException{
