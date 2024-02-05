@@ -11,7 +11,7 @@ public class Mazo implements Serializable {
         //azules
         for (int i = 1; i <= 10 ; i++) {
             if (i==2){
-                Carta carta= new Carta("",String.valueOf(i));
+                Carta carta= new Carta("multicolor",String.valueOf(i));
                 cartas.add(carta);
             }
             else {
@@ -21,7 +21,7 @@ public class Mazo implements Serializable {
         }
         for (int i = 1; i <= 10 ; i++) {
             if (i==2){
-                Carta carta= new Carta("",String.valueOf(i));
+                Carta carta= new Carta("multicolor",String.valueOf(i));
                 cartas.add(carta);
             }
             else {
@@ -31,7 +31,7 @@ public class Mazo implements Serializable {
         }
         for (int i = 1; i <= 5 ; i++) {
             if (i==2){
-                Carta carta= new Carta("",String.valueOf(i));
+                Carta carta= new Carta("multicolor",String.valueOf(i));
                 cartas.add(carta);
             }
             else {
@@ -46,7 +46,7 @@ public class Mazo implements Serializable {
         //verde
         for (int i = 1; i <= 10 ; i++) {
             if (i==2){
-                Carta carta= new Carta("",String.valueOf(i));
+                Carta carta= new Carta("multicolor",String.valueOf(i));
                 cartas.add(carta);
             }
             else {
@@ -56,7 +56,7 @@ public class Mazo implements Serializable {
         }
         for (int i = 1; i <= 10 ; i++) {
             if (i==2){
-                Carta carta= new Carta("",String.valueOf(i));
+                Carta carta= new Carta("multicolor",String.valueOf(i));
                 cartas.add(carta);
             }
             else {
@@ -66,7 +66,7 @@ public class Mazo implements Serializable {
         }
         for (int i = 1; i <= 5 ; i++) {
             if (i==2){
-                Carta carta= new Carta("",String.valueOf(i));
+                Carta carta= new Carta("multicolor",String.valueOf(i));
                 cartas.add(carta);
             }
             else {
@@ -81,7 +81,7 @@ public class Mazo implements Serializable {
         //amarillo
         for (int i = 1; i <= 10 ; i++) {
             if (i==2){
-                Carta carta= new Carta("",String.valueOf(i));
+                Carta carta= new Carta("multicolor",String.valueOf(i));
                 cartas.add(carta);
             }
             else {
@@ -91,7 +91,7 @@ public class Mazo implements Serializable {
         }
         for (int i = 1; i <= 10 ; i++) {
             if (i==2){
-                Carta carta= new Carta("",String.valueOf(i));
+                Carta carta= new Carta("multicolor",String.valueOf(i));
                 cartas.add(carta);
             }
             else {
@@ -101,7 +101,7 @@ public class Mazo implements Serializable {
         }
         for (int i = 1; i <= 5 ; i++) {
             if (i==2){
-                Carta carta= new Carta("",String.valueOf(i));
+                Carta carta= new Carta("multicolor",String.valueOf(i));
                 cartas.add(carta);
             }
             else {
@@ -116,7 +116,7 @@ public class Mazo implements Serializable {
         //rojo
         for (int i = 1; i <= 10 ; i++) {
             if (i==2){
-                Carta carta= new Carta("",String.valueOf(i));
+                Carta carta= new Carta("multicolor",String.valueOf(i));
                 cartas.add(carta);
             }
             else {
@@ -126,7 +126,7 @@ public class Mazo implements Serializable {
         }
         for (int i = 1; i <= 10 ; i++) {
             if (i==2){
-                Carta carta= new Carta("",String.valueOf(i));
+                Carta carta= new Carta("multicolor",String.valueOf(i));
                 cartas.add(carta);
             }
             else {
@@ -136,7 +136,7 @@ public class Mazo implements Serializable {
         }
         for (int i = 1; i <= 5 ; i++) {
             if (i==2){
-                Carta carta= new Carta("",String.valueOf(i));
+                Carta carta= new Carta("multicolor",String.valueOf(i));
                 cartas.add(carta);
             }
             else {
