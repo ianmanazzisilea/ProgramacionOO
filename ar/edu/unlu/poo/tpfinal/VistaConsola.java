@@ -28,9 +28,10 @@ public class VistaConsola implements IVista, Serializable {
     private JTextArea textArea1;
     private boolean canto = true;
     public void mesaactualizada(){
-        txtSalida.setText("");
+        //txtSalida.setText("");
         mano = controlador.getMano();
         cartasMesa = controlador.getMesa();
+        txtSalida.append("----------------------------------" + "\n");
         txtSalida.append("mano:" + "\n");
         for (int i = 0; i < mano.size(); i++) {
             txtSalida.append("carta " + (i + 1) + " " + mano.get(i) + "\n");
@@ -68,7 +69,6 @@ public class VistaConsola implements IVista, Serializable {
         txtEntrada.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //txtSalida.setText("");
                 String entrada = txtEntrada.getText();
                 txtSalida.append(entrada + "\n");
                 txtEntrada.setText("");
@@ -79,9 +79,10 @@ public class VistaConsola implements IVista, Serializable {
         button1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                txtSalida.append(txtEntrada.getText() + "\n");
-                procesarEntrada(txtEntrada.getText());
+                String entrada = txtEntrada.getText();
+                txtSalida.append(entrada + "\n");
                 txtEntrada.setText("");
+                procesarEntrada(entrada);
             }
         });
     }
@@ -219,7 +220,7 @@ public class VistaConsola implements IVista, Serializable {
     }
     //-------------------visual-----------------------------------------------
     private void mostraropponent(){
-            //mesaactualizada();
+            txtSalida.append("turno del oponente" + "\n");
     }
     private void mostrardraw(){
         txtSalida.append("desea agarrar una carta?" + "\n");
@@ -249,6 +250,7 @@ public class VistaConsola implements IVista, Serializable {
             case opponent : mostraropponent();
             break;
         }
+        txtSalida.setCaretPosition(txtSalida.getText().length());
 
     }
     public void finpartida(){

@@ -51,6 +51,7 @@
                       <background color="-1"/>
                       <caretColor color="-1"/>
                       <disabledTextColor color="-1182209"/>
+                      <maximumSize width="1" height="18"/>
                       <selectedTextColor color="-394241"/>
                       <selectionColor color="-14668469"/>
                     </properties>
