@@ -155,8 +155,8 @@ public class Mazo implements Serializable {
         for (int i = 0; i < descarte.size(); i++) {
             Carta carta= descarte.get(i);
             cartas.add(carta);
-            descarte.clear();
         }
+        descarte.clear();
     }
     public Carta getCartaSuperior(){
         if (cartas.size()==0){
